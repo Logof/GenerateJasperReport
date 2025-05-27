@@ -1,12 +1,13 @@
 package org.logof.xlsToJasper.jasper;
 
-import jakarta.xml.bind.annotation.XmlElement;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.Data;
 import org.logof.xlsToJasper.jasper.report.Band;
 import org.logof.xlsToJasper.jasper.report.Detail;
+import org.logof.xlsToJasper.jasper.report.Field;
+import org.logof.xlsToJasper.jasper.report.FieldDescription;
 import org.logof.xlsToJasper.jasper.report.Font;
 import org.logof.xlsToJasper.jasper.report.JasperReport;
 import org.logof.xlsToJasper.jasper.report.PageHeader;
@@ -19,6 +20,7 @@ import org.logof.xlsToJasper.jasper.report.TextField;
 import org.logof.xlsToJasper.jasper.report.TextFieldExpression;
 import org.logof.xlsToJasper.jasper.report.Title;
 import org.logof.xlsToJasper.model.MetaData;
+import org.logof.xlsToJasper.model.MetaData.Cell;
 
 @Data
 public class Creator {
@@ -153,5 +155,32 @@ public class Creator {
       textElement.setFont(reportFont);
     }
     return textElement;
+  }
+
+  public void createFields(JasperReport report, MetaData metaData) {
+    report.getField().addAll(
+      metaData.getRowCells()
+              .stream()
+              .filter(cell -> cell.getValue().startsWith("{") && cell.getValue().endsWith("}"))
+              .map(this::mapToField)
+              .toList());
+  }
+
+  private Field mapToField(Cell cell) {
+    Field field = new Field();
+    field.setName(cell.getValue());
+    field.setClazz("java.lang.String");
+
+    Property property = new Property();
+    property.setName("net.sf.jasperreports.xpath.field.expression");
+    property.setValue("");
+
+    FieldDescription description = new FieldDescription();
+    description.setContent("");
+
+    field.getProperty().add(property);
+    field.setFieldDescription(description);
+
+    return field;
   }
 }

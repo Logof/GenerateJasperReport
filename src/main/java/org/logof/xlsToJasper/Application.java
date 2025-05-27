@@ -21,6 +21,7 @@ public class Application {
     report.setName("INPUT");
 
     reportCreator.createProperties(report);
+    reportCreator.createFields(report, metaData);
     report.setDetail(reportCreator.createDetail(metaData));
 
     serializeToXml(report, "/home/user/EBS/input_1.jrxml");

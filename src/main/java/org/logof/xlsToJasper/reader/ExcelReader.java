@@ -155,6 +155,7 @@ public class ExcelReader implements FileReader {
     return (int) (sheet.getColumnWidthInPixels(columnIndex));
   }
 
+  //FIXME: Рассчитывается не верно, получается высота больше, чем на самом деле
   private static int getRowHeightInPixels(Row row) {
     double result = row.getHeightInPoints() * 96.0 / 72.0;
     return (int)(result);
